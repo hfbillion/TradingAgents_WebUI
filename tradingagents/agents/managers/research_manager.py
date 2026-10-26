@@ -1,10 +1,10 @@
-"""Research Manager: turns the bull/bear debate into a structured investment plan for the trader."""
+"""研究经理：将看涨/看跌辩论转化为交易员的结构化投资计划。"""
 
-from __future__ import annotations
+from __future__ import annotations  # 启用后注解
 
-from tradingagents.agents.context import get_instrument_context_from_state, get_language_instruction
-from tradingagents.agents.schemas import ResearchPlan, render_research_plan
-from tradingagents.agents.structured import (
+from tradingagents.agents.context import get_instrument_context_from_state, get_language_instruction  # 导入上下文和语言指令
+from tradingagents.agents.schemas import ResearchPlan, render_research_plan  # 导入研究计划模式和渲染函数
+from tradingagents.agents.structured import (  # 导入结构化输出相关函数
     NO_EXTERNAL_TOOLS,
     bind_structured,
     invoke_structured_or_freetext,
@@ -12,14 +12,17 @@ from tradingagents.agents.structured import (
 
 
 def create_research_manager(llm):
-    structured_llm = bind_structured(llm, ResearchPlan, "Research Manager")
+    """创建研究经理节点"""
+    structured_llm = bind_structured(llm, ResearchPlan, "Research Manager")  # 绑定结构化输出
 
     def research_manager_node(state) -> dict:
-        instrument_context = get_instrument_context_from_state(state)
-        history = state["investment_debate_state"].get("history", "")
+        """研究经理节点函数"""
+        instrument_context = get_instrument_context_from_state(state)  # 获取工具上下文
+        history = state["investment_debate_state"].get("history", "")  # 获取辩论历史
 
-        investment_debate_state = state["investment_debate_state"]
+        investment_debate_state = state["investment_debate_state"]  # 获取投资辩论状态
 
+        # 构建提示词
         prompt = f"""As the Research Manager and debate facilitator, your role is to critically evaluate this round of debate and deliver a clear, actionable investment plan for the trader.
 
 {instrument_context}
@@ -50,6 +53,7 @@ Write these sections, in this order, starting with the recommendation on its own
 
 {NO_EXTERNAL_TOOLS}""" + get_language_instruction()
 
+        # 调用结构化输出或自由文本
         investment_plan = invoke_structured_or_freetext(
             structured_llm,
             llm,
@@ -58,6 +62,7 @@ Write these sections, in this order, starting with the recommendation on its own
             "Research Manager",
         )
 
+        # 更新投资辩论状态
         new_investment_debate_state = {
             "history": investment_debate_state.get("history", ""),
             "bear_history": investment_debate_state.get("bear_history", ""),

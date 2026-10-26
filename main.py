@@ -1,16 +1,15 @@
-from tradingagents.default_config import DEFAULT_CONFIG
-from tradingagents.graph.trading_graph import TradingAgentsGraph
+from tradingagents.default_config import DEFAULT_CONFIG  # 导入默认配置
+from tradingagents.graph.trading_graph import TradingAgentsGraph  # 导入交易智能体图
 
-# DEFAULT_CONFIG already applies TRADINGAGENTS_* env-var overrides
-# (llm_provider, deep_think_llm, quick_think_llm, backend_url, etc.),
-# so users can switch models or endpoints purely via .env without
-# editing this script. Override individual keys here only when you
-# want a hard-coded value that should ignore the environment.
-config = DEFAULT_CONFIG.copy()
+# DEFAULT_CONFIG 已经应用了 TRADINGAGENTS_* 环境变量覆盖
+# （llm_provider, deep_think_llm, quick_think_llm, backend_url 等），
+# 因此用户可以纯粹通过 .env 切换模型或端点而无需编辑此脚本。
+# 仅当您想要一个应该忽略环境的硬编码值时，在此处覆盖单个键。
+config = DEFAULT_CONFIG.copy()  # 复制默认配置
 
-# Initialize with custom config
+# 使用自定义配置初始化
 ta = TradingAgentsGraph(debug=True, config=config)
 
-# forward propagate
-_, decision = ta.propagate("NVDA", "2026-09-01")
-print(decision)
+# 前向传播
+_, decision = ta.propagate("NVDA", "2026-09-01")  # 为 NVDA 在 2026-09-01 运行分析
+print(decision)  # 打印决策

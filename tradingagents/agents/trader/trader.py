@@ -1,16 +1,16 @@
-"""Trader: turns the Research Manager's investment plan into a concrete transaction proposal."""
+"""交易员：将研究经理的投资计划转化为具体的交易提案。"""
 
-from __future__ import annotations
+from __future__ import annotations  # 启用后注解
 
-from langchain_core.messages import AIMessage
+from langchain_core.messages import AIMessage  # 导入 AI 消息
 
-from tradingagents.agents.context import (
+from tradingagents.agents.context import (  # 导入上下文相关函数
     get_instrument_context_from_state,
     get_language_instruction,
     get_portfolio_context_from_state,
 )
-from tradingagents.agents.schemas import TraderProposal, render_trader_proposal
-from tradingagents.agents.structured import (
+from tradingagents.agents.schemas import TraderProposal, render_trader_proposal  # 导入交易员提案模式和渲染函数
+from tradingagents.agents.structured import (  # 导入结构化输出相关函数
     NO_EXTERNAL_TOOLS,
     bind_structured,
     invoke_structured_or_freetext,
@@ -18,21 +18,22 @@ from tradingagents.agents.structured import (
 
 
 def create_trader(llm):
-    structured_llm = bind_structured(llm, TraderProposal, "Trader")
+    """创建交易员节点"""
+    structured_llm = bind_structured(llm, TraderProposal, "Trader")  # 绑定结构化输出
 
     def trader_node(state):
-        company_name = state["company_of_interest"]
-        instrument_context = get_instrument_context_from_state(state)
-        investment_plan = state["investment_plan"]
-        # The research plan digests the debate but loses exact price structure;
-        # give the Trader the technical market report so entry/stop levels are
-        # grounded in real ATR / support-resistance / current price (#1167). The
-        # report is empty when the user did not select the market analyst, so
-        # only offer it (and the grounding instruction) when it has content.
-        market_report = (state["market_report"] or "").strip()
-        portfolio_context = get_portfolio_context_from_state(state)
+        """交易员节点函数"""
+        company_name = state["company_of_interest"]  # 获取公司名称
+        instrument_context = get_instrument_context_from_state(state)  # 获取工具上下文
+        investment_plan = state["investment_plan"]  # 获取投资计划
+        # 研究计划消化了辩论但丢失了确切的价格结构；
+        # 给交易员技术市场报告，以便入场/止损水平建立在真实的 ATR / 支撑阻力 / 当前价格上（#1167）。
+        # 当用户未选择市场分析师时，报告为空，因此仅在它有内容时提供它（和接地指令）。
+        market_report = (state["market_report"] or "").strip()  # 获取市场报告
+        portfolio_context = get_portfolio_context_from_state(state)  # 获取投资组合上下文
 
         if market_report:
+            # 接地指令：使用技术市场报告的价格结构
             grounding = (
                 "Ground concrete price levels (entry, stop-loss, position sizing) in the technical "
                 "market report's price structure -- current price, support/resistance, ATR, and "
@@ -43,6 +44,7 @@ def create_trader(llm):
             grounding = ""
             report_section = ""
 
+        # 构建消息
         messages = [
             {
                 "role": "system",
@@ -50,9 +52,8 @@ def create_trader(llm):
                     "You are a trading agent analyzing market data to make investment decisions. "
                     "Based on your analysis, provide a specific recommendation to buy, sell, or hold. "
                     + grounding
-                    # Entry/stop are numeric price fields. Asking for concrete
-                    # levels invites a percentage ("15%"), which is not a price
-                    # and fails the structured parse (#1288).
+                    # 入场/止损是数字价格字段。要求具体水平会邀请百分比（"15%"），
+                    # 这不是价格并且使结构化解析失败（#1288）。
                     + "State entry price and stop-loss as absolute price levels in the "
                     "instrument's quote currency (for example 189.5), never a percentage "
                     "or a range; convert a percentage distance to the price level it "
@@ -82,6 +83,7 @@ def create_trader(llm):
             },
         ]
 
+        # 调用结构化输出或自由文本
         trader_plan = invoke_structured_or_freetext(
             structured_llm,
             llm,

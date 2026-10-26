@@ -1,73 +1,75 @@
-from typing import Annotated
+from typing import Annotated  # 导入类型注解
 
-from langgraph.graph import MessagesState
-from typing_extensions import TypedDict
+from langgraph.graph import MessagesState  # 导入 LangGraph 的消息状态
+from typing_extensions import TypedDict  # 导入 TypedDict
 
 
-# Researcher team state
+# 研究团队状态（看涨/看跌研究员之间的辩论）
 class InvestDebateState(TypedDict):
     bull_history: Annotated[
-        str, "Bullish Conversation history"
+        str, "看涨对话历史"
     ]
     bear_history: Annotated[
-        str, "Bearish Conversation history"
+        str, "看跌对话历史"
     ]
-    history: Annotated[str, "Conversation history"]
-    current_response: Annotated[str, "Latest response"]
-    count: Annotated[int, "Length of the current conversation"]
+    history: Annotated[str, "完整对话历史"]
+    current_response: Annotated[str, "最新回复"]
+    count: Annotated[int, "当前对话长度（轮次）"]
 
 
-# Risk management team state
+# 风险管理团队状态（激进/保守/中立分析师之间的讨论）
 class RiskDebateState(TypedDict):
     aggressive_history: Annotated[
-        str, "Aggressive Agent's Conversation history"
+        str, "激进分析师的对话历史"
     ]
     conservative_history: Annotated[
-        str, "Conservative Agent's Conversation history"
+        str, "保守分析师的对话历史"
     ]
     neutral_history: Annotated[
-        str, "Neutral Agent's Conversation history"
+        str, "中立分析师的对话历史"
     ]
-    history: Annotated[str, "Conversation history"]
-    latest_speaker: Annotated[str, "Analyst that spoke last"]
+    history: Annotated[str, "完整对话历史"]
+    latest_speaker: Annotated[str, "最后发言的分析师"]
     current_aggressive_response: Annotated[
-        str, "Latest response by the aggressive analyst"
+        str, "激进分析师的最新回复"
     ]
     current_conservative_response: Annotated[
-        str, "Latest response by the conservative analyst"
+        str, "保守分析师的最新回复"
     ]
     current_neutral_response: Annotated[
-        str, "Latest response by the neutral analyst"
+        str, "中立分析师的最新回复"
     ]
-    count: Annotated[int, "Length of the current conversation"]
+    count: Annotated[int, "当前对话长度（轮次）"]
 
 
+# 智能体状态（主状态模式）
 class AgentState(MessagesState):
-    company_of_interest: Annotated[str, "Company that we are interested in trading"]
-    asset_type: Annotated[str, "Asset type under analysis such as stock or crypto"]
-    instrument_context: Annotated[str, "Deterministic ticker identity resolved at run start"]
-    trade_date: Annotated[str, "The analysis date; data is served as of it"]
+    company_of_interest: Annotated[str, "我们感兴趣交易的公司"]
+    asset_type: Annotated[str, "正在分析的资产类型，如股票或加密货币"]
+    instrument_context: Annotated[str, "在运行开始时解析的确定性股票标识"]
+    trade_date: Annotated[str, "分析日期；数据以此日期为准"]
 
-    # research step
-    market_report: Annotated[str, "Report from the Market Analyst"]
-    sentiment_report: Annotated[str, "Report from the Sentiment Analyst"]
-    news_report: Annotated[str, "Report from the News Analyst on company and world news"]
-    fundamentals_report: Annotated[str, "Report from the Fundamentals Analyst"]
+    # 研究步骤
+    market_report: Annotated[str, "市场分析师的报告"]
+    sentiment_report: Annotated[str, "情绪分析师的报告"]
+    news_report: Annotated[str, "新闻分析师关于公司和世界新闻的报告"]
+    fundamentals_report: Annotated[str, "基本面分析师的报告"]
 
-    # researcher team discussion step
+    # 研究团队讨论步骤
     investment_debate_state: Annotated[
-        InvestDebateState, "Current state of the debate on if to invest or not"
+        InvestDebateState, "关于是否投资的辩论的当前状态"
     ]
-    investment_plan: Annotated[str, "Investment plan from the Research Manager"]
+    investment_plan: Annotated[str, "研究经理的投资计划"]
 
-    trader_investment_plan: Annotated[str, "Transaction proposal from the Trader"]
+    trader_investment_plan: Annotated[str, "交易员的交易提案"]
 
-    # risk management team discussion step
+    # 风险管理团队讨论步骤
     risk_debate_state: Annotated[
-        RiskDebateState, "Current state of the debate on evaluating risk"
+        RiskDebateState, "关于评估风险的辩论的当前状态"
     ]
-    final_trade_decision: Annotated[str, "Final decision from the Portfolio Manager"]
-    final_rating: Annotated[str, "The Portfolio Manager's 5-tier rating, or REVIEW when it has none"]
-    past_context: Annotated[str, "Memory log context for the Portfolio Manager (same-ticker decisions + cross-ticker lessons), written by the Memory Log step"]
+    final_trade_decision: Annotated[str, "投资组合经理的最终决策"]
+    final_rating: Annotated[str, "投资组合经理的 5 级评级，如果没有则为 REVIEW"]
+    past_context: Annotated[str, "投资组合经理的记忆日志上下文（同股票决策 + 跨股票教训），由记忆日志步骤写入"]
+  # 记忆备注：记忆日志步骤本运行无法结算或读取的内容，用于报告；一切顺利时为空
     memory_note: Annotated[str, "What the Memory Log step could not settle or read this run, for the report; empty when all went well"]
-    portfolio_context: Annotated[str, "Caller-supplied holdings and cash, rendered at run start; empty when not provided"]
+    portfolio_context: Annotated[str, "调用者提供的持仓和现金，在运行开始时渲染；未提供时为空"]
