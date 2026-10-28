@@ -16,6 +16,12 @@ The stream includes:
 Hidden model reasoning is not exposed. The UI renders agent-visible messages and
 outputs that the framework already produces.
 
+See [WEB_EVENTS.md](WEB_EVENTS.md) for the versioned event envelope, topic
+patterns, and browser/server subscription examples.
+
+See [WEB_DESIGN.md](WEB_DESIGN.md) for the architecture, design rationale,
+runtime sequence, security boundaries, trade-offs, and extension strategy.
+
 ## Install
 
 From the repository root:
@@ -27,8 +33,12 @@ npm install
 npm run build
 ```
 
-Keep the existing provider keys and `TRADINGAGENTS_*` settings in `.env`. The API
-does not send credentials or backend URLs to the browser.
+Keep the existing provider keys and `TRADINGAGENTS_*` settings in `.env`. The Web
+UI lets you choose from providers whose credentials are available and selects the
+first configured provider by default. For example, when only
+`DEEPSEEK_API_KEY` is set, new analyses default to DeepSeek rather than OpenAI.
+The API sends only provider names, model IDs, and credential status to the
+browser; credentials and backend URLs never leave the server.
 
 ## Run the built application
 

@@ -1,5 +1,5 @@
-"""Web API and live trace support for TradingAgents.
+"""TradingAgents 的 Web API 与实时追踪支持包。
 
-FastAPI is an optional dependency, so importing this package must not import the
-application eagerly. Use ``tradingagents.web.app:app`` as the ASGI target.
+FastAPI 属于可选依赖，因此导入本包时不能立即导入应用对象；ASGI 服务应使用
+``tradingagents.web.app:app`` 作为目标。
 """

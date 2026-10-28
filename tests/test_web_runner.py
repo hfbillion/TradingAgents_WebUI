@@ -7,10 +7,13 @@ from tradingagents.web.events import RunSession
 
 
 class FakeGraph:
+    latest_config = None
+
     def __init__(self, analysts, config, debug, callbacks):
         self.analysts = analysts
         self.config = config
         self.callbacks = callbacks
+        FakeGraph.latest_config = config
         self.propagator = SimpleNamespace(get_graph_args=lambda callbacks: {})
         self.recorded = False
         self.ended = False
@@ -56,6 +59,9 @@ def test_execute_run_publishes_reports_messages_and_final_result(monkeypatch):
             "analysts": ["market"],
             "research_depth": 1,
             "output_language": "Chinese",
+            "provider": "deepseek",
+            "quick_model": "deepseek-flash",
+            "deep_model": "deepseek-v4-pro",
         }
     )
 
@@ -64,6 +70,9 @@ def test_execute_run_publishes_reports_messages_and_final_result(monkeypatch):
     assert session.status == "completed"
     assert session.final_result["rating"] == "BUY"
     assert session.final_result["reports"]["market_report"].startswith("# Market")
+    assert FakeGraph.latest_config["llm_provider"] == "deepseek"
+    assert FakeGraph.latest_config["quick_think_llm"] == "deepseek-flash"
+    assert FakeGraph.latest_config["deep_think_llm"] == "deepseek-v4-pro"
     event_types = [event["type"] for event in session.events]
     assert "message.created" in event_types
     assert "report.updated" in event_types

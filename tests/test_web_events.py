@@ -47,3 +47,65 @@ def test_callback_deduplicates_same_langchain_run_id():
     callback.on_tool_start({"name": "prices"}, "NVDA", **kwargs)
 
     assert [event["type"] for event in session.events] == ["tool.started"]
+
+
+def test_event_envelope_classifies_agent_role_and_side():
+    session = RunSession(request={"ticker": "NVDA"})
+
+    event = session.publish("node.started", node="Bull Researcher", run_id="node-1")
+
+    assert event["schema_version"] == 1
+    assert event["session_id"] == session.id
+    assert event["family"] == "node"
+    assert event["phase"] == "start"
+    assert event["correlation_id"] == "node-1"
+    assert event["agent"] == {
+        "name": "Bull Researcher",
+        "id": "bull_researcher",
+        "role": "researcher",
+        "side": "bull",
+    }
+    assert "agent.started" in event["topics"]
+    assert "agent.side.bull.node.started" in event["topics"]
+
+
+def test_session_subscribers_support_topic_patterns_and_unsubscribe():
+    session = RunSession(request={"ticker": "NVDA"})
+    analyst_events = []
+    bull_events = []
+    stop_analysts = session.subscribe("agent.role.analyst.*", analyst_events.append)
+    session.subscribe("agent.side.bull.*", bull_events.append)
+
+    session.publish("node.started", node="Market Analyst")
+    session.publish("node.started", node="Bull Researcher")
+    stop_analysts()
+    session.publish("node.completed", node="Market Analyst")
+
+    assert [event["type"] for event in analyst_events] == ["node.started"]
+    assert [event["type"] for event in bull_events] == ["node.started"]
+
+
+def test_registry_subscriber_receives_events_from_future_sessions():
+    registry = RunRegistry()
+    events = []
+    unsubscribe = registry.subscribe("run.*", events.append)
+
+    registry.create({"ticker": "NVDA"})
+    unsubscribe()
+
+    assert [event["type"] for event in events] == ["run.created"]
+
+
+def test_tool_lifecycle_has_stable_correlation_fields():
+    session = RunSession(request={"ticker": "NVDA"})
+    callback = LiveTraceCallback(session)
+    kwargs = {"run_id": "tool-1", "metadata": {"langgraph_node": "Market Analyst"}}
+
+    callback.on_tool_start({"name": "get_prices"}, "NVDA", **kwargs)
+    callback.on_tool_end({"close": 100}, **kwargs)
+
+    started, completed = session.events
+    assert started["tool_call_id"] == completed["tool_call_id"] == "tool-1"
+    assert completed["tool"] == "get_prices"
+    assert completed["is_error"] is False
+    assert completed["duration_ms"] >= 0

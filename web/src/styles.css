@@ -1,7 +1,12 @@
+/* 全局主题变量和浏览器文字渲染策略。 */
 :root {
+  /* 声明暗色界面，让浏览器原生控件也采用深色。 */
   color-scheme: dark;
+  /* 禁止浏览器合成不存在的粗体或斜体字形。 */
   font-synthesis: none;
+  /* 优先提升标题和正文的字形可读性。 */
   text-rendering: optimizeLegibility;
+  /* 以下变量统一控制背景、面板、边框和语义色。 */
   --bg: #07100e;
   --panel: #0d1916;
   --panel-2: #101f1b;
@@ -14,10 +19,13 @@
   --red: #f16f6f;
 }
 
+/* 所有尺寸都包含 padding 和 border，便于网格精确计算。 */
 * { box-sizing: border-box; }
 
+/* 320px 是页面支持的最小视口宽度。 */
 html { min-width: 320px; background: var(--bg); }
 
+/* 页面背景叠加品牌光晕、细网格和底色。 */
 body {
   margin: 0;
   min-width: 320px;
@@ -30,10 +38,13 @@ body {
   background-size: auto, 32px 32px, 32px 32px, auto;
 }
 
+/* 表单控件继承应用字体，避免浏览器默认字体突兀。 */
 button, input { font: inherit; }
 
+/* 根容器至少撑满整个视口。 */
 .app-shell { min-height: 100vh; }
 
+/* 顶栏固定在窗口顶部，并用半透明模糊保持层次。 */
 .topbar {
   height: 72px;
   border-bottom: 1px solid var(--line);
@@ -48,8 +59,10 @@ button, input { font: inherit; }
   z-index: 20;
 }
 
+/* 品牌图标和文字横向排列。 */
 .brand-block { display: flex; align-items: center; gap: 12px; }
 
+/* 方形品牌标记承载闪电图标。 */
 .brand-mark {
   width: 38px;
   height: 38px;
@@ -61,16 +74,25 @@ button, input { font: inherit; }
   border-radius: 9px;
 }
 
+/* 品牌主标题通过字距和粗体形成终端式视觉。 */
 .brand-title { font-size: 15px; letter-spacing: 0.11em; font-weight: 800; }
+/* AGENTS 使用品牌绿色强调。 */
 .brand-title span { color: var(--green); }
+/* 英文副标题保持小字号和宽字距。 */
 .brand-subtitle { color: var(--muted); font-size: 9px; letter-spacing: 0.22em; margin-top: 2px; }
+/* 版本号使用等宽字体，强化工程工具属性。 */
 .version { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 11px; }
+/* 默认连接圆点代表离线。 */
 .connection-dot { width: 8px; height: 8px; border-radius: 50%; background: #52645e; box-shadow: 0 0 0 4px rgba(82, 100, 94, 0.12); }
+/* live 使用绿色与外发光。 */
 .connection-dot.live { background: var(--green); box-shadow: 0 0 0 4px rgba(72, 213, 151, 0.12), 0 0 15px rgba(72, 213, 151, 0.45); }
+/* reconnecting 使用琥珀色呼吸动画。 */
 .connection-dot.reconnecting { background: var(--amber); animation: pulse 1.3s infinite; }
 
+/* 主内容限制最大宽度并在大屏居中。 */
 main { max-width: 1500px; padding: 40px 24px 52px; margin: 0 auto; }
 
+/* Hero 在桌面端为说明区和任务摘要两列。 */
 .hero {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 340px;
@@ -79,11 +101,16 @@ main { max-width: 1500px; padding: 40px 24px 52px; margin: 0 auto; }
   padding: 22px 0 36px;
 }
 
+/* Hero 上方的小型产品分类标签。 */
 .eyebrow { color: var(--green); letter-spacing: 0.18em; font-size: 11px; font-weight: 700; }
+/* clamp 使主标题随屏幕宽度平滑缩放。 */
 .hero h1.ant-typography { font-size: clamp(38px, 5vw, 66px); line-height: 1.04; margin: 12px 0 18px; letter-spacing: -0.045em; font-weight: 700; }
+/* 标题关键短语使用品牌色。 */
 .hero h1 span { color: var(--green); }
+/* 描述文字限制行宽，避免超长行影响阅读。 */
 .hero p.ant-typography { color: var(--muted); max-width: 690px; font-size: 16px; line-height: 1.8; margin: 0; }
 
+/* 当前任务摘要使用渐变深色卡片。 */
 .hero-status {
   border: 1px solid var(--line);
   padding: 20px;
@@ -91,64 +118,108 @@ main { max-width: 1500px; padding: 40px 24px 52px; margin: 0 auto; }
   position: relative;
   overflow: hidden;
 }
+/* 模糊圆形光斑增加摘要卡片的空间感。 */
 .hero-status::before { content: ''; position: absolute; width: 120px; height: 120px; border-radius: 50%; background: rgba(72, 213, 151, 0.09); filter: blur(20px); right: -35px; top: -50px; }
+/* 摘要头尾两端对齐。 */
 .hero-status-top, .hero-status-bottom { display: flex; align-items: center; justify-content: space-between; font-size: 11px; letter-spacing: 0.08em; }
+/* 股票代码使用大型等宽字体。 */
 .hero-symbol { font: 700 38px/1 ui-monospace, SFMono-Regular, Menlo, monospace; margin: 25px 0 17px; letter-spacing: -0.05em; }
+/* 阶段数和耗时采用弱化颜色。 */
 .hero-status-bottom { color: var(--muted); margin-top: 8px; }
 
+/* 实时指标区与下方内容留出间距。 */
 .metrics-row { margin-bottom: 16px; }
+/* 指标卡统一透明面板和边框。 */
 .metric-card.ant-card { height: 100%; border-color: var(--line); background: rgba(13, 25, 22, 0.86); }
+/* 指标标题采用小型大写标签。 */
 .metric-card .ant-statistic-title { text-transform: uppercase; letter-spacing: 0.12em; font-size: 10px; }
+/* 指标值使用等宽字体便于数字比较。 */
 .metric-card .ant-statistic-content { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 26px; }
+/* 指标图标用绿色强调。 */
 .metric-card .ant-statistic-content-prefix { color: var(--green); margin-right: 12px; font-size: 16px; }
 
+/* 最终决策摘要条使用绿色半透明背景。 */
 .decision-strip.ant-card { border-color: rgba(72, 213, 151, 0.32); margin-bottom: 16px; background: rgba(28, 73, 57, 0.24); }
+/* 决策条按标签、正文、评级三列布局。 */
 .decision-strip .ant-card-body { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 20px; padding: 15px 20px; }
+/* 决策标签保持单行并突出品牌色。 */
 .decision-label { color: var(--green); letter-spacing: 0.1em; font: 700 10px ui-monospace, SFMono-Regular, Menlo, monospace; white-space: nowrap; }
+/* 过长决策正文在摘要条内显示省略号。 */
 .decision-copy { color: #c9ded6; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+/* 评级标签使用等宽字体。 */
 .rating-tag { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
 
+/* 桌面工作区左侧固定宽度表单，右侧自适应执行区。 */
 .workspace-grid { display: grid; grid-template-columns: 310px minmax(0, 1fr); gap: 16px; align-items: start; }
+/* 配置卡在桌面滚动时保持可见。 */
 .setup-card.ant-card { border-color: var(--line); background: rgba(13, 25, 22, 0.94); position: sticky; top: 88px; }
+/* 两类卡片标题统一成控制台风格。 */
 .setup-card .ant-card-head-title, .pipeline-card .ant-card-head-title { letter-spacing: 0.08em; text-transform: uppercase; font-size: 12px; }
+/* 表单标签使用中等对比度。 */
 .setup-card .ant-form-item-label label { color: #a9c0b8; font-size: 12px; }
+/* 四个分析师复选项排列成两列。 */
 .analyst-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 4px; }
+/* 清除 Ant Design 多选项默认左外边距。 */
 .analyst-grid .ant-checkbox-wrapper { margin-inline-start: 0; font-size: 12px; }
+/* 主要启动按钮增加高度和对比。 */
 .setup-card .ant-btn-primary { height: 46px; font-weight: 700; color: #06100d; }
+/* 模型摘要与表单用顶边框分隔。 */
 .model-note { border-top: 1px solid var(--line); margin-top: 20px; padding-top: 16px; display: grid; gap: 9px; }
+/* 摘要标签和值两端对齐。 */
 .model-note div { display: flex; justify-content: space-between; gap: 10px; font-size: 10px; }
+/* 模型摘要标签采用弱化大写样式。 */
 .model-note span { color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; }
+/* 模型名称过长时使用省略号。 */
 .model-note strong { color: #b9cdc6; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
+/* 右侧执行列允许网格子项正确收缩。 */
 .execution-column { min-width: 0; display: grid; gap: 16px; }
+/* 流水线与活动卡共享面板样式。 */
 .pipeline-card.ant-card, .activity-card.ant-card { border-color: var(--line); background: rgba(13, 25, 22, 0.9); }
+/* 五个决策阶段在桌面端等宽排列。 */
 .pipeline { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0; }
+/* 单阶段内部采用图标和说明两列布局。 */
 .phase { min-width: 0; padding: 15px 16px; border-right: 1px solid var(--line); position: relative; display: grid; grid-template-columns: auto 1fr; column-gap: 11px; row-gap: 14px; }
+/* 最后一阶段不需要右分隔线。 */
 .phase:last-child { border-right: 0; }
+/* 阶段编号跨越内部两列。 */
 .phase-index { grid-column: 1 / -1; font: 500 9px ui-monospace, SFMono-Regular, Menlo, monospace; color: #577269; }
+/* 圆形阶段图标通过状态类改变颜色。 */
 .phase-icon { width: 30px; height: 30px; border: 1px solid #2a423a; color: #78958b; display: grid; place-items: center; border-radius: 50%; transition: .25s ease; }
+/* 标题和英文副标题纵向排列。 */
 .phase-copy { min-width: 0; display: flex; flex-direction: column; }
 .phase-copy strong { font-size: 12px; white-space: nowrap; }
 .phase-copy span { color: var(--muted); font-size: 9px; text-transform: uppercase; margin-top: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+/* Agent 状态条占满阶段卡片宽度。 */
 .phase-agents { grid-column: 1 / -1; display: flex; gap: 5px; }
+/* 每个短条代表一个实际参与的 Agent。 */
 .phase-agents i { width: 18px; height: 3px; background: #263b34; border-radius: 2px; }
+/* 运行、完成、失败分别使用青、绿、红。 */
 .phase-agents i.running { background: var(--cyan); box-shadow: 0 0 8px rgba(97, 215, 232, 0.45); }
 .phase-agents i.completed { background: var(--green); }
 .phase-agents i.failed { background: var(--red); }
+/* 当前运行阶段增加轻微青色底纹。 */
 .phase.running { background: rgba(97, 215, 232, 0.035); }
 .phase.running .phase-icon { color: var(--cyan); border-color: rgba(97, 215, 232, 0.55); box-shadow: 0 0 18px rgba(97, 215, 232, 0.1); }
 .phase.completed .phase-icon { color: var(--green); border-color: rgba(72, 213, 151, 0.45); background: rgba(72, 213, 151, 0.08); }
 
+/* 活动卡顶部减少留白，为标签页腾出空间。 */
 .activity-card .ant-card-body { padding-top: 6px; }
+/* 时间线筛选器和顺序提示两端对齐。 */
 .trace-toolbar { display: flex; align-items: center; justify-content: space-between; padding: 5px 0 22px; }
+/* 固定高度让大量事件在卡片内滚动。 */
 .trace-scroll { height: 600px; overflow: auto; padding: 7px 14px 0 4px; scrollbar-color: #2d4840 transparent; }
 .trace-scroll .ant-timeline { max-width: 100%; }
+/* 单条事件使用内嵌深色面板。 */
 .trace-event { border: 1px solid #1d312b; background: rgba(9, 20, 17, 0.68); padding: 13px 15px; margin-bottom: 4px; }
+/* 事件标题和时间戳分列显示。 */
 .trace-heading { display: flex; justify-content: space-between; gap: 20px; align-items: baseline; }
 .trace-heading strong { font-size: 12px; color: #d7eae3; }
 .trace-heading time { font: 10px ui-monospace, SFMono-Regular, Menlo, monospace; color: #5e7b71; }
+/* 摘要保持换行和长 token 强制折行。 */
 .trace-summary.ant-typography { margin: 9px 0 8px; color: #91aca2; font: 11px/1.65 ui-monospace, SFMono-Regular, Menlo, monospace; white-space: pre-wrap; overflow-wrap: anywhere; }
 .trace-event .ant-tag { font: 9px ui-monospace, SFMono-Regular, Menlo, monospace; color: #628078; background: #101f1b; }
+/* 不同事件族的图标使用对应语义色。 */
 .event-icon { font-size: 14px; padding: 3px; background: var(--panel); }
 .event-icon.error { color: var(--red); }
 .event-icon.success, .event-icon.agent { color: var(--green); }
@@ -156,9 +227,13 @@ main { max-width: 1500px; padding: 40px 24px 52px; margin: 0 auto; }
 .event-icon.llm { color: var(--cyan); }
 .event-icon.muted { color: #58736a; }
 
+/* 报告区高度与时间线保持一致。 */
 .report-tabs { min-height: 600px; }
+/* 左侧报告导航固定宽度。 */
 .report-tabs > .ant-tabs-nav { width: 118px; }
+/* Markdown 正文限制宽度并提高行距。 */
 .markdown-report { max-width: 900px; padding: 5px 24px 32px; color: #bbd0c8; font-size: 13px; line-height: 1.85; }
+/* 标题、代码、表格和引用分别做可读性增强。 */
 .markdown-report h1, .markdown-report h2, .markdown-report h3 { color: #eef9f5; margin-top: 1.5em; }
 .markdown-report h1 { font-size: 24px; }
 .markdown-report h2 { font-size: 18px; border-bottom: 1px solid var(--line); padding-bottom: 8px; }
@@ -168,10 +243,13 @@ main { max-width: 1500px; padding: 40px 24px 52px; margin: 0 auto; }
 .markdown-report th, .markdown-report td { border: 1px solid var(--line); padding: 8px; text-align: left; }
 .markdown-report blockquote { border-left: 2px solid var(--green); margin-left: 0; padding-left: 15px; color: var(--muted); }
 
+/* 页脚显示产品说明和风险声明。 */
 footer { border-top: 1px solid var(--line); max-width: 1500px; margin: 0 auto; padding: 24px; display: flex; justify-content: space-between; color: #587269; font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; }
 
+/* 重连状态点的呼吸动画只改变透明度。 */
 @keyframes pulse { 50% { opacity: .35; } }
 
+/* 中等屏幕把双栏工作区改为单栏、流水线改为三列。 */
 @media (max-width: 1050px) {
   .workspace-grid { grid-template-columns: 1fr; }
   .setup-card.ant-card { position: static; }
@@ -180,6 +258,7 @@ footer { border-top: 1px solid var(--line); max-width: 1500px; margin: 0 auto; p
   .phase:nth-child(3) { border-right: 0; }
 }
 
+/* 手机屏幕压缩间距、隐藏次要顶栏信息并纵向排列内容。 */
 @media (max-width: 760px) {
   .topbar { height: auto; min-height: 68px; padding: 12px 16px; }
   .runtime-meta > *:not(.connection-dot) { display: none; }
